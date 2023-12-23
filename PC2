@@ -1,0 +1,30 @@
+print("Welcome to TechnoMir Chat! by Ma3rX \n")
+print("                              ID: ", os.getComputerID())
+print("Enter ID of companion: ")
+id = tonumber(read())
+
+for i, side in ipairs(rs.getSides()) do --#Loop for each side on the computer that redstone can be used, these can also be used by modems.
+if peripheral.getType(side) == 'modem' then --#Did we find a modem... Or some other peripheral?
+  print('Found Modem On Side '..side.."!")
+  rednet.open(side)
+  wireless = peripheral.wrap(side)
+  break --#Opened modem, dont open any others.
+end
+end
+function sendMessage(destination, message, protocol)
+if destination and message then
+  rednet.send(destination, message, protocol)
+end
+end
+function waitForMessage(displayMessage)
+local time = textutils.formatTime(os.time(), false)
+local sender, message, protocol = rednet.receive()
+if displayMessage then print("[", time, "] ", id, ":  ", message) else return message end
+end
+
+while true do
+  msg = read()
+  sendMessage(id, msg)
+  print("[", textutils.formatTime(os.time(), false), "] You:  ", msg)
+  waitForMessage(true)
+end
